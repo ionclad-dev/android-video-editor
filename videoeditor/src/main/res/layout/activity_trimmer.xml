@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000"
+    android:orientation="vertical"
+    tools:context=".trimmer.TrimmerActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:layout_marginTop="24dp"
+        android:layout_height="56dp">
+        <ImageView
+            android:id="@+id/backActionButton"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="12dp"
+
+            android:src="@drawable/arrow_back"/>
+
+
+    </LinearLayout>
+
+  <FrameLayout
+      android:layout_weight="1"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+      <androidx.media3.ui.PlayerView
+          android:id="@+id/exoplayerView"
+
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+
+          />
+
+
+      <com.emintolgahanpolat.videoeditor.trimmer.VideoController
+          android:id="@+id/videoController"
+          android:layout_gravity="center"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"/>
+
+
+  </FrameLayout>
+
+
+<dev.iconclad.videotimelineview.VideoTimelineView
+    android:id="@+id/timelineView2"
+    android:layout_width="match_parent"
+    android:layout_marginVertical="8dp"
+    android:layout_height="56dp"/>
+
+    <LinearLayout
+
+        android:layout_weight="0"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#fff"
+            android:text="@string/drag_to_adjust_video"/>
+
+        <TextView
+            android:id="@+id/nextButton"
+            android:layout_margin="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corner_white"
+            android:textColor="#000"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:gravity="center"
+            android:text="@string/next"/>
+
+    </LinearLayout>
+</LinearLayout>
