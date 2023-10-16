@@ -5,16 +5,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.WindowManager
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemClickListener
-import android.widget.GridView
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import coil.Coil
 import coil.ImageLoader
 import coil.decode.VideoFrameDecoder
@@ -22,9 +20,10 @@ import dev.iconclad.videoeditor.R
 import dev.iconclad.videoeditor.trimmer.TrimmerActivity
 
 class VideoGalleryActivity : AppCompatActivity() {
+    private val _adapter = VideoGalleryGridAdapter()
     private val REQUEST_PERMISSION = 100
-    private lateinit var videoGridView: GridView
-    private lateinit var videoList: ArrayList<String>
+    private lateinit var _videoGridView: RecyclerView
+    private var _videoList: MutableList<String> = mutableListOf()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,11 +44,11 @@ class VideoGalleryActivity : AppCompatActivity() {
             .build()
         Coil.setImageLoader(imageLoader)
 
-findViewById<ImageView>(R.id.closeActionButton).setOnClickListener {
-    finish()
-}
-        videoGridView = findViewById(R.id.videoGridView)
-        videoList = ArrayList()
+        findViewById<ImageView>(R.id.closeActionButton).setOnClickListener {
+            finish()
+        }
+        _videoGridView = findViewById(R.id.videoGridView)
+
 
         if (checkPermission()) {
             loadVideoList()
@@ -57,22 +56,31 @@ findViewById<ImageView>(R.id.closeActionButton).setOnClickListener {
             requestPermission()
         }
 
-        videoGridView.onItemClickListener =
-            OnItemClickListener { _, _, position, _ ->
-                TrimmerActivity.start(this,videoList[position])
-            }
+        _adapter.setItemClickListener {
+            TrimmerActivity.start(this, it)
+        }
+        _videoGridView.adapter = _adapter
     }
 
     private fun checkPermission(): Boolean {
-        val result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        val result =
+            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
         return result == PackageManager.PERMISSION_GRANTED
     }
 
     private fun requestPermission() {
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PERMISSION)
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+            REQUEST_PERMISSION
+        )
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_PERMISSION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -86,21 +94,21 @@ findViewById<ImageView>(R.id.closeActionButton).setOnClickListener {
     private fun loadVideoList() {
         val contentResolver = contentResolver
         val videoUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-        val cursor = contentResolver.query(videoUri, null, null, null, null)
+        val cursorItem = contentResolver.query(videoUri, null, null, null, null)
 
-        if (cursor != null && cursor.moveToFirst()) {
-            val columnIndex = cursor.getColumnIndex(MediaStore.Video.Media.DATA)
+        if (cursorItem != null && cursorItem.moveToFirst()) {
+            val columnIndex = cursorItem.getColumnIndex(MediaStore.Video.Media.DATA)
             do {
-                val videoPath = cursor.getString(columnIndex)
-                videoList.add(videoPath)
-            } while (cursor.moveToNext())
+                val videoPath = cursorItem.getString(columnIndex)
+                _videoList.add(videoPath)
+            } while (cursorItem.moveToNext())
 
-            cursor.close()
+            cursorItem.close()
+            _adapter.setData(_videoList)
 
-            val adapter = VideoGalleryGridAdapter(this, videoList)
-            videoGridView.adapter = adapter
         }
     }
+
     companion object {
         fun start(context: Context) {
             val intent = Intent(context, VideoGalleryActivity::class.java)

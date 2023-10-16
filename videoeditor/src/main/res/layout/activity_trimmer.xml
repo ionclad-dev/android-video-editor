@@ -36,7 +36,7 @@
           />
 
 
-      <com.emintolgahanpolat.videoeditor.trimmer.VideoController
+      <dev.iconclad.videoeditor.trimmer.VideoController
           android:id="@+id/videoController"
           android:layout_gravity="center"
           android:layout_width="match_parent"

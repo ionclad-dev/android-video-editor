@@ -24,7 +24,7 @@ import dev.iconclad.videotimelineview.VideoTimelineView
 import dev.iconclad.videotimelineview.VideoTimelineViewListener
 
 class TrimmerActivity : AppCompatActivity(), Player.Listener, VideoTimelineViewListener {
-    private lateinit var _videoController : VideoController
+    private lateinit var _videoController: VideoController
     private lateinit var _timelineView: VideoTimelineView
 
     private lateinit var _playerView: PlayerView
@@ -146,7 +146,7 @@ class TrimmerActivity : AppCompatActivity(), Player.Listener, VideoTimelineViewL
 
     private fun initializeTimeBar(videoPath: String) {
 
-        _timelineView.setVideoPath(videoPath!!)
+        _timelineView.setVideoPath(videoPath)
         _timelineView.setListener(this)
 
         val handler = Handler(Looper.getMainLooper())
@@ -236,8 +236,8 @@ class TrimmerActivity : AppCompatActivity(), Player.Listener, VideoTimelineViewL
 
             alertDialogBuilder.setPositiveButton("Tamam") { dialog, which ->
 
-                dialog.dismiss();
-                FFmpegKit.cancel();
+                dialog.dismiss()
+                FFmpegKit.cancel()
             }
             alertDialog = alertDialogBuilder.create()
             alertDialog!!.show()
