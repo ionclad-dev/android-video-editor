@@ -20,6 +20,7 @@ import androidx.media3.ui.PlayerView
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.ReturnCode
 import dev.iconclad.videoeditor.R
+import dev.iconclad.videoeditor.editor.EditorActivity
 import dev.iconclad.videotimelineview.VideoTimelineView
 import dev.iconclad.videotimelineview.VideoTimelineViewListener
 
@@ -102,32 +103,11 @@ class TrimmerActivity : AppCompatActivity(), Player.Listener, VideoTimelineViewL
                 alertDialog?.dismiss()
                 if (ReturnCode.isSuccess(session.returnCode)) {
 
-                    println(outputVideoPath)
-                    Log.i(
-                        "TAG 0",
-                        java.lang.String.format(
-                            "Command failed with state %s and rc %s.%s",
-                            session.state,
-                            session.returnCode,
-                            session.failStackTrace
-                        )
-                    )
-
+                    EditorActivity.start(this,outputVideoPath)
                     // SUCCESS
                 } else if (ReturnCode.isCancel(session.returnCode)) {
-                    Log.v(
-                        "TAG 1",
-                        java.lang.String.format(
-                            "Command failed with state %s and rc %s.%s",
-                            session.state,
-                            session.returnCode,
-                            session.failStackTrace
-                        )
-                    )
-
                     // CANCEL
                 } else {
-
                     // FAILURE
                     Log.d(
                         "TAG 2",

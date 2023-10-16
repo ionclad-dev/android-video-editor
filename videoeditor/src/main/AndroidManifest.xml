@@ -5,6 +5,9 @@
 
     <application>
         <activity
+            android:name=".editor.EditorActivity"
+            android:exported="false" />
+        <activity
             android:name=".trimmer.TrimmerActivity"
             android:exported="false" />
         <activity

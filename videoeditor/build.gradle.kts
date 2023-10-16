@@ -4,6 +4,7 @@ plugins {
 }
 
 android {
+    resourcePrefix = "ve"
     namespace = "dev.iconclad.videoeditor"
     compileSdk = 34
 
