@@ -116,6 +116,10 @@ class FFmpegCommandBuilder {
         return this
     }
 
+    fun setColorFilter(fFmpegColorBuilder: FFmpegColorBuilder){
+        command.addAll(fFmpegColorBuilder.build())
+    }
+
     // Ses kaldırma işlemini yapmak için kullanılır.
     fun removeAudio(inputVideo: String, outputVideo: String) {
         command.add("-i")

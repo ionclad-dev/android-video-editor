@@ -1,0 +1,58 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_sheet"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:orientation="vertical"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="72dp"
+    android:background="#000"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+
+   <LinearLayout
+       android:orientation="vertical"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+       <LinearLayout
+           android:orientation="horizontal"
+           android:id="@+id/veLinearlayout"
+           android:layout_width="match_parent"
+           android:layout_height="56dp"
+           android:gravity="center_vertical">
+
+           <TextView
+               android:layout_width="0dp"
+               android:layout_height="wrap_content"
+               android:textSize="24sp"
+               android:layout_margin="8dp"
+               android:layout_weight="1"
+               android:textStyle="bold"
+               android:textColor="#fff"
+               android:text="@string/filters"/>
+           <TextView
+               android:id="@+id/nextButton"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_margin="8dp"
+               android:background="@drawable/rounded_corner_white"
+               android:gravity="center"
+               android:paddingHorizontal="16dp"
+               android:paddingVertical="8dp"
+               android:text="@string/save"
+               android:textColor="#000" />
+       </LinearLayout>
+
+       <androidx.recyclerview.widget.RecyclerView
+           android:id="@+id/filterRecycleView"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:orientation="horizontal"
+           tools:listitem="@layout/ve_item_filter"
+           app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+ />
+
+
+   </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,14 +7,19 @@ import android.os.Bundle
 import android.view.WindowManager
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dev.iconclad.videoeditor.R
 import dev.iconclad.videoeditor.trimmer.VideoController
 import dev.iconclad.videoeditor.trimmer.VideoControllerListener
+import dev.iconclad.videoeditor.util.ffmpeg.efectList
 import dev.iconclad.videoeditor.util.view.TabItemView
+
 
 class EditorActivity : AppCompatActivity() {
     private lateinit var _videoController: VideoController
@@ -23,6 +28,7 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var _player: ExoPlayer
     private lateinit var _mediaItem: MediaItem
     private lateinit var videoPath: String
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.setFlags(
@@ -35,8 +41,11 @@ class EditorActivity : AppCompatActivity() {
         videoPath = intent.getStringExtra("videoPath")!!
         init()
         playerInit()
+        filterAdapterInit(videoPath)
 
-
+        val bottomSheetLayout = findViewById<ConstraintLayout>(R.id.bottom_sheet)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN;
     }
 
     private fun init() {
@@ -65,7 +74,7 @@ class EditorActivity : AppCompatActivity() {
         _playerView.useController = false
         _player = ExoPlayer.Builder(this).build()
         _playerView.player = _player
-        _mediaItem = MediaItem.fromUri(videoPath!!)
+        _mediaItem = MediaItem.fromUri(videoPath)
         _player.setMediaItem(_mediaItem)
         _player.playWhenReady = true
         _player.prepare()
@@ -80,6 +89,8 @@ class EditorActivity : AppCompatActivity() {
                 }
             }
         })
+
+
     }
 
     private fun textAction() {
@@ -95,7 +106,23 @@ class EditorActivity : AppCompatActivity() {
     }
 
     private fun filterAction() {
+        if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
+        } else {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+        }
+    }
+
+    private fun filterAdapterInit(videoPath: String) {
+        val adapter = FilterAdapter(videoPath)
+        val recycleView = findViewById<RecyclerView>(R.id.filterRecycleView)
+        recycleView.adapter = adapter
+        val layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        recycleView.layoutManager = layoutManager
+        adapter.setData(efectList)
     }
 
     companion object {

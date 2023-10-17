@@ -2,4 +2,6 @@
     <string name="upload_video">Upload Video</string>
     <string name="drag_to_adjust_video">Drag to adjust video</string>
     <string name="next">Next</string>
+    <string name="save">Save</string>
+    <string name="filters">Filters</string>
 </resources>
