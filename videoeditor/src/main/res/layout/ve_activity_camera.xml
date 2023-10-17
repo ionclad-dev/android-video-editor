@@ -5,9 +5,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".camera.CameraActivity">
-<SurfaceView
-    android:id="@+id/surfaceView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+    <TextureView
+        android:id="@+id/texture_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+    </TextureView>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:layout_marginTop="24dp"
+        android:layout_height="56dp">
+        <ImageView
+            android:id="@+id/closeActionButton"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="8dp"
+            android:src="@drawable/close"/>
+
+    </LinearLayout>
+
+
+
+
+    <ImageView
+        android:layout_gravity="bottom|center"
+        android:id="@+id/record_video_btn"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+      android:layout_margin="16dp"
+        android:src="@drawable/ve_record_button"/>
 
 </FrameLayout>
