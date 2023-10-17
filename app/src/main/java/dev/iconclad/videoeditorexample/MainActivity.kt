@@ -19,9 +19,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.videoGaleryAction).setOnClickListener {
-       VideoGalleryActivity.start(this)
+        VideoGalleryActivity.start(this)
 
-          // EditorActivity.start(this,"/storage/emulated/0/Android/data/dev.iconclad.videoeditorexample/files/Movies/VIDEO_20231017_163557.mp4")
+            //  EditorActivity.start(this,"/storage/emulated/0/Android/data/dev.iconclad.videoeditorexample/files/Movies/VIDEO_20231017_180006.mp4")
         }
     }
 }

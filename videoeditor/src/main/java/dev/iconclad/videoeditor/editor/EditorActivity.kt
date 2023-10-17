@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -21,6 +22,7 @@ import dev.iconclad.videoeditor.R
 import dev.iconclad.videoeditor.trimmer.VideoController
 import dev.iconclad.videoeditor.trimmer.VideoControllerListener
 import dev.iconclad.videoeditor.trimmer.VideoFileUtil
+import dev.iconclad.videoeditor.util.ffmpeg.FFmpegCommandBuilder
 import dev.iconclad.videoeditor.util.ffmpeg.efectList
 import dev.iconclad.videoeditor.util.view.TabItemView
 
@@ -129,67 +131,80 @@ class EditorActivity : AppCompatActivity() {
         recycleView.layoutManager = layoutManager
         adapter.setData(efectList)
         adapter.setItemClickListener {
-            alertDialog?.show()
-            _filterVideoPath = VideoFileUtil(this).createOutputVideoPath()
-           /* FFmpegCommandBuilder()
-                .setInputPath(_videoPath)
-                .setOutputPath(_filterVideoPath)
-                .setFilter(it).execute{
+            showProcessingDialog()
+           val op = VideoFileUtil(this).createOutputVideoPath()
+      FFmpegCommandBuilder()
+                 .setInputPath(_videoPath)
+                 .setColorChannelMixer(it)
+                 .setOutputPathCA(op).execute{
 
-            }*/
+                     alertDialog?.dismiss()
+             }
 
-            val cmd = arrayOf(
-                "-i",
-                _videoPath,
-                "-filter_complex",
-                "[0:v]colorchannelmixer=0.393:0.769:0.189:0.349:0.686:0.168:0.272:0.534:0.131[v]" ,
-                "-map",
-                "[v]",
-                "-c:a",
-                "copy",
-                _filterVideoPath
-            )
+            /*
 
+                      val cmd = arrayOf(
+                            "-i",
+                            _videoPath,
+                            "-filter_complex",
+                            "[0:v]colorchannelmixer=0.393:0.769:0.189:0.349:0.686:0.168:0.272:0.534:0.131[v]" ,
+                            "-map",
+                            "[v]",
+                            "-c:a",
+                            "copy",
+                          op
+                        )
 
+                      Log.i("FFmpegBuilder",cmd.joinToString())
 
-            FFmpegKit.executeWithArgumentsAsync(cmd) { session ->
-                _mediaItem = MediaItem.fromUri(_filterVideoPath)
-                _player.clearMediaItems()
-                _player.setMediaItem(_mediaItem)
-                _player.playWhenReady = true
-                _player.prepare()
-                alertDialog?.dismiss()
-            }
-        }
+                        FFmpegKit.executeWithArgumentsAsync(cmd) { session ->
+                            alertDialog?.dismiss()
+                            _mediaItem = MediaItem.fromUri(_filterVideoPath)
+                            _player.clearMediaItems()
+                            _player.setMediaItem(_mediaItem)
+                            _player.playWhenReady = true
+                            _player.prepare()
+
+                        }*/
     }
+}
 
-    companion object {
-        fun start(context: Context, videoPath: String) {
-            println(videoPath)
-            val intent = Intent(context, EditorActivity::class.java)
-            intent.putExtra("videoPath", videoPath)
-            context.startActivity(intent)
-        }
+override fun onPause() {
+    _player.pause()
+    super.onPause()
+}
+
+override fun onDestroy() {
+    _player.release()
+    super.onDestroy()
+}
+companion object {
+    fun start(context: Context, videoPath: String) {
+        println(videoPath)
+        val intent = Intent(context, EditorActivity::class.java)
+        intent.putExtra("videoPath", videoPath)
+        context.startActivity(intent)
     }
+}
 
-    private fun showProcessingDialog() {
-        try {
-            val alertDialogBuilder = AlertDialog.Builder(this)
-            alertDialogBuilder.setCancelable(false)
-            alertDialogBuilder.setTitle("İşleniyor")
-            alertDialogBuilder.setMessage("Video İşleniyor lütfen bekleyin.")
+private fun showProcessingDialog() {
+    try {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setCancelable(false)
+        alertDialogBuilder.setTitle("İşleniyor")
+        alertDialogBuilder.setMessage("Video İşleniyor lütfen bekleyin.")
 
 
-            alertDialogBuilder.setPositiveButton("Tamam") { dialog, which ->
+        alertDialogBuilder.setPositiveButton("Tamam") { dialog, which ->
 
-                dialog.dismiss()
-                FFmpegKit.cancel()
-            }
-            alertDialog = alertDialogBuilder.create()
-            alertDialog!!.show()
-        } catch (e: Exception) {
-            e.printStackTrace()
+            dialog.dismiss()
+            FFmpegKit.cancel()
         }
+        alertDialog = alertDialogBuilder.create()
+        alertDialog!!.show()
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
+}
 
 }

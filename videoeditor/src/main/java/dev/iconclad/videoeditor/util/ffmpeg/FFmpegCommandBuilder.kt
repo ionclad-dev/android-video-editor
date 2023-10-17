@@ -45,6 +45,12 @@ class FFmpegCommandBuilder {
         return this
     }
 
+    fun setOutputPathCA(outputPath: String): FFmpegCommandBuilder {
+        command.add("-c:a")
+        command.add("copy")
+        command.add(outputPath)
+        return this
+    }
     // Video kodeğini ayarlamak için kullanılır.
     fun setVideoCodec(videoCodec: String): FFmpegCommandBuilder {
         command.add("-c:v")
@@ -67,12 +73,18 @@ class FFmpegCommandBuilder {
     }
 
     // Video filtresini ayarlamak için kullanılır.
-    fun setFilter(filter: String): FFmpegCommandBuilder {
-        command.add("-vf")
-        command.add("\"$filter\"")
+    fun setColorChannelMixer(filter: String?): FFmpegCommandBuilder {
+        command.add("-filter_complex")
+        command.add("[0:v]colorchannelmixer=$filter[v]")
+        command.add("-map")
+        command.add("[v]")
+
         return this
     }
-
+    fun setCode(string: String):FFmpegCommandBuilder{
+        command.add(string)
+        return this
+    }
     // Ses bit hızını ayarlamak için kullanılır.
     fun setAudioBitrate(audioBitrate: String): FFmpegCommandBuilder {
         command.add("-b:a")

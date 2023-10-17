@@ -37,81 +37,86 @@ class FFmpegColorBuilder() {
 
 }
 
-data class FilterModel(val name:String,val videoFilter:String,val imageFilter: ColorMatrix? = null)
-
-val efectList: MutableList<FilterModel> = mutableListOf(
-    FilterModel("Filter Yok",""),
-    FilterModel("Sepia", "colorchannelmixer=0.393:0.769:0.189:0.349:0.686:0.168:0.272:0.534:0.131", ColorMatrix(
-        floatArrayOf(
+/*
+*  FilterModel("Sepia",  floatArrayOf(
             0.393f, 0.769f, 0.189f, 0f, 0f,
             0.349f, 0.686f, 0.168f, 0f, 0f,
             0.272f, 0.534f, 0.131f, 0f, 0f,
             0f, 0f, 0f, 1f, 0f
-        )
-    )),
-    FilterModel("Negatif", "negate", ColorMatrix(
-        floatArrayOf(
+        )*/
+
+data class FilterModel(val name:String,val filter: FloatArray? = null,val colorchannelmixer:String? = null)
+
+val efectList: MutableList<FilterModel> = mutableListOf(
+    FilterModel("Filter Yok"),
+    FilterModel("Sepia",  floatArrayOf(
+        0.393f, 0.769f, 0.189f, 0f, 0f,
+        0.349f, 0.686f, 0.168f, 0f, 0f,
+        0.272f, 0.534f, 0.131f, 0f, 0f,
+        0f, 0f, 0f, 1f, 0f
+        ),"0.393:0.769:0.189:0.349:0.686:0.168:0.272:0.534:0.131"
+ ),
+    FilterModel("Negatif",  floatArrayOf(
             -1f, 0f, 0f, 0f, 255f,
             0f, -1f, 0f, 0f, 255f,
             0f, 0f, -1f, 0f, 255f,
             0f, 0f, 0f, 1f, 0f
-        )
-    )),
-    FilterModel("Siyah-Beyaz", "colorchannelmixer=0.33:0.33:0.33:0.33:0.33:0.33:0.33:0.33:0.33", ColorMatrix().apply {
-        setSaturation(0f)
-    }),
-    FilterModel("Aynı Tonlar", "lutyuv='u=128:v=128'", ColorMatrix(
+        ),"1:0:0:0:0:.5:0:0:0:0:0"
+    ),
+    FilterModel("Siyah-Beyaz",
         floatArrayOf(
+            33f, 33f, 33f, 33f, 255f,
+            33f, 33f, 33f, 3f, 255f,
+            33f, 33f, 33f, 33f, 255f,
+            33f, 33f, 33f, 33f, 0f
+        ),"0.33:0.33:0.33:0.33:0.33:0.33:0.33:0.33:0.33"
+        ),
+    FilterModel("Aynı Tonlar",  floatArrayOf(
             1f, 0.5f, 0f, 0f, 0f,
             0f, 1f, 0f, 0f, 0f,
             0f, 0f, 1f, 0f, 0f,
             0f, 0f, 0f, 1f, 0f
         )
-    )),
-    FilterModel("Canlandırma", "eq=saturation=2", ColorMatrix(
-        floatArrayOf(
+    ),
+    FilterModel("Canlandırma",   floatArrayOf(
             1.4f, 0f, 0f, 0f, 0f,
             0f, 1.4f, 0f, 0f, 0f,
             0f, 0f, 1.4f, 0f, 0f,
             0f, 0f, 0f, 1f, 0f
         )
-    )),
-    FilterModel("Soluklaştırma", "eq=saturation=0.5", ColorMatrix(
-        floatArrayOf(
+    ),
+    FilterModel("Soluklaştırma",  floatArrayOf(
             0.5f, 0f, 0f, 0f, 0f,
             0f, 0.5f, 0f, 0f, 0f,
             0f, 0f, 0.5f, 0f, 0f,
             0f, 0f, 0f, 1f, 0f
         )
-    )),
-    FilterModel("Tek Renk (Kırmızı)", "colorkey=0xRRGGBB:0.1:0.1", ColorMatrix(floatArrayOf(
+    ),
+    FilterModel("Tek Renk (Kırmızı)", floatArrayOf(
         1f, 0f, 0f, 0f, 0f,
         0f, 0f, 0f, 0f, 0f,
         0f, 0f, 0f, 0f, 0f,
         0f, 0f, 0f, 1f, 0f
-    ))),
-    FilterModel("Soğuk Mavi Tonu", "colorbalance=rs=0.2:gs=0.3:bs=0.9",  ColorMatrix(
-        floatArrayOf(
+    ),"1.5:0:0:0:1.5:0:0:0:0.5"),
+    FilterModel("Soğuk Mavi Tonu",   floatArrayOf(
             1f, 0f, 0f, 0f, 0f,
             0f, 1f, 0f, 0f, 0f,
             0f, 0f, 1.4f, 0f, 0f,
             0f, 0f, 0f, 1f, 0f
         )
-    )),
-    FilterModel("Sıcak Sarı Tonu", "colorbalance=rs=0.8:gs=0.7:bs=0.2", ColorMatrix(
-        floatArrayOf(
+    ),
+    FilterModel("Sıcak Sarı Tonu",  floatArrayOf(
             1.4f, 0f, 0f, 0f, 0f,
             0f, 1.4f, 0f, 0f, 0f,
             0f, 0f, 1f, 0f, 0f,
             0f, 0f, 0f, 1f, 0f
         )
-    )),
-    FilterModel("Yüksek Kontrast", "eq=contrast=2:saturation=2:brightness=-0.2", ColorMatrix(
-        floatArrayOf(
+    ),
+    FilterModel("Yüksek Kontrast",    floatArrayOf(
             2f, 0f, 0f, 0f, -255f,
             0f, 2f, 0f, 0f, -255f,
             0f, 0f, 2f, 0f, -255f,
             0f, 0f, 0f, 1f, 0f
-        )
-    ))
+        ),"1.5:0:0:0:1.5:0:0:0:1.5"
+    )
 )

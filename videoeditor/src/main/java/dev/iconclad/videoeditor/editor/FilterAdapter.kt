@@ -2,6 +2,7 @@ package dev.iconclad.videoeditor.editor
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.view.LayoutInflater
 import android.view.View
@@ -18,8 +19,8 @@ import java.io.File
 class FilterAdapter(val filePath:String) : RecyclerView.Adapter<FilterAdapter.MyViewHolder>() {
 
     private var _data: List<FilterModel> = mutableListOf()
-    private var _onItemClick: ((String) -> Unit)? = null
-    fun setItemClickListener(onItemClick: ((String) -> Unit)?) {
+    private var _onItemClick: ((String?) -> Unit)? = null
+    fun setItemClickListener(onItemClick: ((String?) -> Unit)?) {
         _onItemClick = onItemClick
     }
 
@@ -46,11 +47,11 @@ class FilterAdapter(val filePath:String) : RecyclerView.Adapter<FilterAdapter.My
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(item:  FilterModel) {
             itemView.setOnClickListener {
-                _onItemClick?.invoke(item.videoFilter)
+                _onItemClick?.invoke(item.colorchannelmixer)
             }
             val imageView = itemView.findViewById<SquareImageView>(R.id.imageView)
-            item.imageFilter?.let {
-                imageView.colorFilter = ColorMatrixColorFilter(item.imageFilter)
+            item.filter?.let {
+                imageView.colorFilter = ColorMatrixColorFilter(ColorMatrix(item.filter))
             }
             itemView.findViewById<TextView>(R.id.titleView).text = item.name
             imageView.load(File(filePath))

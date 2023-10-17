@@ -23,7 +23,6 @@ class VideoGalleryActivity : AppCompatActivity() {
     private val _adapter = VideoGalleryGridAdapter()
     private val REQUEST_PERMISSION = 100
     private lateinit var _videoGridView: RecyclerView
-    private var _videoList: MutableList<String> = mutableListOf()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,16 +94,18 @@ class VideoGalleryActivity : AppCompatActivity() {
         val contentResolver = contentResolver
         val videoUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         val cursorItem = contentResolver.query(videoUri, null, null, null, null)
+        var videoList: MutableList<String> = mutableListOf()
 
         if (cursorItem != null && cursorItem.moveToFirst()) {
             val columnIndex = cursorItem.getColumnIndex(MediaStore.Video.Media.DATA)
             do {
                 val videoPath = cursorItem.getString(columnIndex)
-                _videoList.add(videoPath.reversed())
+                videoList.add(videoPath)
             } while (cursorItem.moveToNext())
 
+            videoList
             cursorItem.close()
-            _adapter.setData(_videoList)
+            _adapter.setData(videoList.reversed().toMutableList())
 
         }
     }
