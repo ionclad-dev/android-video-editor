@@ -100,7 +100,7 @@ class VideoGalleryActivity : AppCompatActivity() {
             val columnIndex = cursorItem.getColumnIndex(MediaStore.Video.Media.DATA)
             do {
                 val videoPath = cursorItem.getString(columnIndex)
-                _videoList.add(videoPath)
+                _videoList.add(videoPath.reversed())
             } while (cursorItem.moveToNext())
 
             cursorItem.close()
