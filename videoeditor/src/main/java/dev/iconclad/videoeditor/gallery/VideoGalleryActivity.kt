@@ -35,7 +35,7 @@ class VideoGalleryActivity : AppCompatActivity() {
         )
 
         window.statusBarColor = Color.TRANSPARENT
-        setContentView(R.layout.activity_video_gallery)
+        setContentView(R.layout.ve_activity_video_gallery)
 
         val imageLoader = ImageLoader.Builder(this)
             .components {

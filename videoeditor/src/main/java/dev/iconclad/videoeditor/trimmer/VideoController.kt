@@ -13,6 +13,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import dev.iconclad.videoeditor.R
 import kotlin.math.ceil
+import kotlin.math.min
 
 interface VideoControllerListener {
     fun onChanged(play: Boolean)
@@ -50,8 +51,8 @@ class VideoController : View {
 
     init {
         density = context.resources.displayMetrics.density
-        playIcon = ContextCompat.getDrawable(context, R.drawable.play)!!
-        pauseIcon = ContextCompat.getDrawable(context, R.drawable.pause)!!
+        playIcon = ContextCompat.getDrawable(context, R.drawable.ve_play)!!
+        pauseIcon = ContextCompat.getDrawable(context, R.drawable.ve_pause)!!
         playAnim()
         setOnClickListener {
             togglePlayPause()
@@ -95,20 +96,17 @@ class VideoController : View {
         // Arka planı temizle
         // canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
         if (_isVisible) {
-            val iconSize = dp(56f)
-            val radius = iconSize / 2
+
+
 
             val iconX = (width / 2)
             val iconY = (height / 2)
 
-            val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-            paint.color = Color.parseColor("#7F7F7F")
 
-            canvas.drawCircle(iconX.toFloat(), iconY.toFloat(), radius.toFloat(), paint)
 
             // Simgeyi çiz
             val icon: Drawable = if (isPlaying) pauseIcon!! else playIcon!!
-            val drawableSize = iconSize / 2
+            val drawableSize = dp(56f)
             val drawableLeft = iconX - drawableSize / 2
             val drawableTop = iconY - drawableSize / 2
             val drawableRight = iconX + drawableSize / 2

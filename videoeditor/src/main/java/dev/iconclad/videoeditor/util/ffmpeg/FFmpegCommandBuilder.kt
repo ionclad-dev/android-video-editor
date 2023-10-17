@@ -1,15 +1,34 @@
 package dev.iconclad.videoeditor.util.ffmpeg
 
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.concurrent.Executors
+import com.arthenica.ffmpegkit.FFmpegKit
+import com.arthenica.ffmpegkit.FFmpegSessionCompleteCallback
 
+class FFmpegCommandBuilder {
+    private val command : MutableList<String> = mutableListOf()
+   private fun formatCSeconds(timeInSeconds: Long): String {
+        val hours = timeInSeconds / 3600
+        val secondsLeft = timeInSeconds - hours * 3600
+        val minutes = secondsLeft / 60
+        val seconds = secondsLeft - minutes * 60
+        var formattedTime = ""
+        if (hours < 10) formattedTime += "0"
+        formattedTime += "$hours:"
+        if (minutes < 10) formattedTime += "0"
+        formattedTime += "$minutes:"
+        if (seconds < 10) formattedTime += "0"
+        formattedTime += seconds
+        return formattedTime
+    }
 
-class FFmpegCommandBuilder(private val ffmpegPath: String) {
-    private val command = mutableListOf(ffmpegPath)
-    private val durationFormat = SimpleDateFormat("HH:mm:ss")
+    private  fun formatMilliseconds(timeInMilliseconds: Long): String {
+        val seconds = timeInMilliseconds / 1000
+        val hours = seconds / 3600
+        val minutes = (seconds % 3600) / 60
+        val remainingSeconds = seconds % 60
+
+        return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds)
+
+    }
 
     // Giriş dosyasını ayarlamak için kullanılır.
     fun setInputPath(inputPath: String): FFmpegCommandBuilder {
@@ -20,6 +39,8 @@ class FFmpegCommandBuilder(private val ffmpegPath: String) {
 
     // Çıkış dosyasını ayarlamak için kullanılır.
     fun setOutputPath(outputPath: String): FFmpegCommandBuilder {
+        command.add("-c")
+        command.add("copy")
         command.add(outputPath)
         return this
     }
@@ -68,17 +89,16 @@ class FFmpegCommandBuilder(private val ffmpegPath: String) {
 
     // Video süresini milisaniye cinsinden ayarlamak için kullanılır.
     fun setDuration(durationMillis: Long): FFmpegCommandBuilder {
-        val duration = durationFormat.format(Date(durationMillis))
+
         command.add("-t")
-        command.add(duration)
+        command.add(formatMilliseconds(durationMillis))
         return this
     }
 
     // Video başlama zamanını milisaniye cinsinden ayarlamak için kullanılır.
     fun setStartTime(startTimeMillis: Long): FFmpegCommandBuilder {
-        val startTime = durationFormat.format(Date(startTimeMillis))
         command.add("-ss")
-        command.add(startTime)
+        command.add(formatMilliseconds(startTimeMillis))
         return this
     }
 
@@ -105,29 +125,16 @@ class FFmpegCommandBuilder(private val ffmpegPath: String) {
     }
 
     // FFmpeg komutunu oluşturmak için kullanılır.
-    fun build(): List<String> {
-        return command
+    fun build(): Array<String> {
+        return command.toTypedArray()
     }
 
     // FFmpeg komutunu çalıştırmak ve çıktıları işlemek için kullanılır.
-    fun execute(callback: (String) -> Unit) {
-        val commandArray = command.toTypedArray()
-        val processBuilder = ProcessBuilder(*commandArray)
-
-        val executor = Executors.newSingleThreadExecutor()
-        executor.execute {
-            try {
-                val process = processBuilder.start()
-                val reader = BufferedReader(InputStreamReader(process.inputStream))
-                var line: String?
-                while (reader.readLine().also { line = it } != null) {
-                    callback(line ?: "")
-                }
-                process.waitFor()
-                process.destroy()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+    fun execute(callback: FFmpegSessionCompleteCallback) {
+        android.util.Log.i("FFmpegBuilder",command.joinToString())
+        FFmpegKit.executeWithArgumentsAsync(build()) {
+            callback.apply(it)
         }
+
     }
 }

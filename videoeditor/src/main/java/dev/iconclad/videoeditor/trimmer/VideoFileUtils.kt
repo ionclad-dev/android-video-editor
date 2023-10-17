@@ -13,12 +13,12 @@ class VideoFileUtil(context: Context) {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val storageDir: File? = appContext.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
 
-        if (storageDir != null && storageDir.exists()) {
+        return if (storageDir != null && storageDir.exists()) {
             val videoFileName = "VIDEO_$timeStamp.mp4"
-            return File(storageDir, videoFileName).absolutePath
+            File(storageDir, videoFileName).absolutePath
         } else {
             // Handle the case where external storage is not available
-            return ""
+            ""
         }
     }
 }

@@ -21,6 +21,7 @@ import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.ReturnCode
 import dev.iconclad.videoeditor.R
 import dev.iconclad.videoeditor.editor.EditorActivity
+import dev.iconclad.videoeditor.util.ffmpeg.FFmpegCommandBuilder
 import dev.iconclad.videotimelineview.VideoTimelineView
 import dev.iconclad.videotimelineview.VideoTimelineViewListener
 
@@ -47,7 +48,7 @@ class TrimmerActivity : AppCompatActivity(), Player.Listener, VideoTimelineViewL
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )
         window.statusBarColor = Color.TRANSPARENT
-        setContentView(R.layout.activity_trimmer)
+        setContentView(R.layout.ve_activity_trimmer)
         val videoPath = intent.getStringExtra("videoPath")
         findViewById<ImageView>(R.id.backActionButton).setOnClickListener {
             finish()
@@ -85,7 +86,36 @@ class TrimmerActivity : AppCompatActivity(), Player.Listener, VideoTimelineViewL
             _player.pause()
             showProcessingDialog()
             val outputVideoPath = VideoFileUtil(this).createOutputVideoPath()
-            val cmd = arrayOf(
+
+           val builder= FFmpegCommandBuilder()
+                .setInputPath(videoPath)
+                .setStartTime((_player.duration * _startPosition).toLong())
+                .setDuration((_player.duration * _endPosition).toLong() - (_player.duration * _startPosition).toLong())
+                .setOutputPath(outputVideoPath)
+
+
+            builder.execute {
+                alertDialog?.dismiss()
+                if (ReturnCode.isSuccess(it.returnCode)) {
+
+                    EditorActivity.start(this,outputVideoPath)
+                    // SUCCESS
+                } else if (ReturnCode.isCancel(it.returnCode)) {
+                    // CANCEL
+                } else {
+                    // FAILURE
+                    Log.d(
+                        "TAG 2",
+                        java.lang.String.format(
+                            "Command failed with state %s and rc %s.%s",
+                            it.state,
+                            it.returnCode,
+                            it.failStackTrace
+                        )
+                    )
+                }
+            }
+          /*  val cmd = arrayOf(
                 "-i",
                 videoPath,
                 "-ss",
@@ -120,7 +150,7 @@ class TrimmerActivity : AppCompatActivity(), Player.Listener, VideoTimelineViewL
                     )
                 }
             }
-
+*/
         }
     }
 
