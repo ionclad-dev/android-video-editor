@@ -2,6 +2,7 @@ package dev.iconclad.videoeditorexample
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import dev.iconclad.videoeditor.camera.CameraActivity
 import dev.iconclad.videoeditor.gallery.VideoGalleryActivity
 
 class MainActivity : AppCompatActivity() {
@@ -9,6 +10,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        VideoGalleryActivity.start(this)
+        CameraActivity.start(this)
     }
 }

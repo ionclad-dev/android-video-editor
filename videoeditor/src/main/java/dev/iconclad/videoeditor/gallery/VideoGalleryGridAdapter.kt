@@ -30,7 +30,7 @@ class VideoGalleryGridAdapter : RecyclerView.Adapter<VideoGalleryGridAdapter.MyV
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.ve_item_video_gallery, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.ve_item_gallery, parent, false)
         return MyViewHolder(view)
     }
 
