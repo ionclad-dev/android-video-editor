@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import dev.iconclad.videoeditor.camera.CameraActivity
+import dev.iconclad.videoeditor.editor.EditorActivity
 import dev.iconclad.videoeditor.gallery.VideoGalleryActivity
 
 class MainActivity : AppCompatActivity() {
@@ -18,7 +19,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.videoGaleryAction).setOnClickListener {
-            VideoGalleryActivity.start(this)
+       VideoGalleryActivity.start(this)
+
+          // EditorActivity.start(this,"/storage/emulated/0/Android/data/dev.iconclad.videoeditorexample/files/Movies/VIDEO_20231017_163557.mp4")
         }
     }
 }

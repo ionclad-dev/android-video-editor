@@ -69,7 +69,7 @@ class FFmpegCommandBuilder {
     // Video filtresini ayarlamak için kullanılır.
     fun setFilter(filter: String): FFmpegCommandBuilder {
         command.add("-vf")
-        command.add(filter)
+        command.add("\"$filter\"")
         return this
     }
 

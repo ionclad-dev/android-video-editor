@@ -37,9 +37,10 @@ class FFmpegColorBuilder() {
 
 }
 
-data class FilterModel(val name:String,val videoFilter:String,val imageFilter: ColorMatrix)
+data class FilterModel(val name:String,val videoFilter:String,val imageFilter: ColorMatrix? = null)
 
 val efectList: MutableList<FilterModel> = mutableListOf(
+    FilterModel("Filter Yok",""),
     FilterModel("Sepia", "colorchannelmixer=0.393:0.769:0.189:0.349:0.686:0.168:0.272:0.534:0.131", ColorMatrix(
         floatArrayOf(
             0.393f, 0.769f, 0.189f, 0f, 0f,

@@ -32,7 +32,7 @@
                android:textColor="#fff"
                android:text="@string/filters"/>
            <TextView
-               android:id="@+id/nextButton"
+               android:id="@+id/saveFilterButton"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:layout_margin="8dp"

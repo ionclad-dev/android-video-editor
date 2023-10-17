@@ -49,7 +49,9 @@ class FilterAdapter(val filePath:String) : RecyclerView.Adapter<FilterAdapter.My
                 _onItemClick?.invoke(item.videoFilter)
             }
             val imageView = itemView.findViewById<SquareImageView>(R.id.imageView)
-            imageView.colorFilter = ColorMatrixColorFilter(item.imageFilter)
+            item.imageFilter?.let {
+                imageView.colorFilter = ColorMatrixColorFilter(item.imageFilter)
+            }
             itemView.findViewById<TextView>(R.id.titleView).text = item.name
             imageView.load(File(filePath))
 

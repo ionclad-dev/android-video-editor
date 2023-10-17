@@ -240,8 +240,8 @@ class TrimmerActivity : AppCompatActivity(), Player.Listener, VideoTimelineViewL
         try {
             val alertDialogBuilder = AlertDialog.Builder(this)
             alertDialogBuilder.setCancelable(false)
-            alertDialogBuilder.setTitle("Uyarı")
-            alertDialogBuilder.setMessage("Bu bir temel uyarı iletişim kutusu örneğidir.")
+            alertDialogBuilder.setTitle("İşleniyor")
+            alertDialogBuilder.setMessage("Video İşleniyor lütfen bekleyin.")
 
 
             alertDialogBuilder.setPositiveButton("Tamam") { dialog, which ->
