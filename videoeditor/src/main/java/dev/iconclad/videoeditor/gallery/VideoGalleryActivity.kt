@@ -23,6 +23,7 @@ class VideoGalleryActivity : AppCompatActivity() {
     private val _adapter = VideoGalleryGridAdapter()
     private val REQUEST_PERMISSION = 100
     private lateinit var _videoGridView: RecyclerView
+    private var _videoList: MutableList<String> = mutableListOf()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +64,7 @@ class VideoGalleryActivity : AppCompatActivity() {
 
     private fun checkPermission(): Boolean {
         val result =
-            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VIDEO)
         return result == PackageManager.PERMISSION_GRANTED
     }
 
@@ -94,18 +95,16 @@ class VideoGalleryActivity : AppCompatActivity() {
         val contentResolver = contentResolver
         val videoUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         val cursorItem = contentResolver.query(videoUri, null, null, null, null)
-        var videoList: MutableList<String> = mutableListOf()
 
         if (cursorItem != null && cursorItem.moveToFirst()) {
             val columnIndex = cursorItem.getColumnIndex(MediaStore.Video.Media.DATA)
             do {
                 val videoPath = cursorItem.getString(columnIndex)
-                videoList.add(videoPath)
+                _videoList.add(videoPath)
             } while (cursorItem.moveToNext())
 
-            videoList
             cursorItem.close()
-            _adapter.setData(videoList.reversed().toMutableList())
+            _adapter.setData(_videoList)
 
         }
     }

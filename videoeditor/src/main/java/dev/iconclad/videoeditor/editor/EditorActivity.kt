@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -13,10 +12,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.ui.PlayerView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.arthenica.ffmpegkit.FFmpegKit
+import com.arthenica.ffmpegkit.Log
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dev.iconclad.videoeditor.R
 import dev.iconclad.videoeditor.trimmer.VideoController
@@ -31,8 +32,7 @@ class EditorActivity : AppCompatActivity() {
     private lateinit var _videoController: VideoController
     private lateinit var _playerView: PlayerView
     private lateinit var _tabBar: LinearLayout
-    private lateinit var _player: ExoPlayer
-    private lateinit var _mediaItem: MediaItem
+    private  var _player: ExoPlayer? = null
     private lateinit var _videoPath: String
     private lateinit var _filterVideoPath: String
     private lateinit var _bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
@@ -50,9 +50,23 @@ class EditorActivity : AppCompatActivity() {
         _filterVideoPath = VideoFileUtil(this).createOutputVideoPath()
         _filterVideoPath = _videoPath
         init()
+        _player = ExoPlayer.Builder(this)
+            .build()
+        _playerView.player = _player
         playerInit()
         filterAdapterInit()
 
+
+        _videoController.play()
+        _videoController.setListener(object : VideoControllerListener {
+            override fun onChanged(play: Boolean) {
+                if (play) {
+                    _player?.play()
+                } else {
+                    _player?.pause()
+                }
+            }
+        })
 
         _bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
         _bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -84,25 +98,16 @@ class EditorActivity : AppCompatActivity() {
     }
 
     private fun playerInit() {
-        _playerView.useController = false
-        _player = ExoPlayer.Builder(this).build()
-        _playerView.player = _player
-        _mediaItem = MediaItem.fromUri(_filterVideoPath)
-        _player.setMediaItem(_mediaItem)
-        _player.playWhenReady = true
-        _player.prepare()
+        runOnUiThread {
+            _playerView.useController = false
 
-        _videoController.play()
-        _videoController.setListener(object : VideoControllerListener {
-            override fun onChanged(play: Boolean) {
-                if (play) {
-                    _player.play()
-                } else {
-                    _player.pause()
-                }
-            }
-        })
 
+            val mediaItem = MediaItem.fromUri(_filterVideoPath)
+
+            _player?.setMediaItem(mediaItem)
+            _player?.prepare()
+            _player?.play()
+        }
 
     }
 
@@ -131,80 +136,64 @@ class EditorActivity : AppCompatActivity() {
         recycleView.layoutManager = layoutManager
         adapter.setData(efectList)
         adapter.setItemClickListener {
-            showProcessingDialog()
-           val op = VideoFileUtil(this).createOutputVideoPath()
-      FFmpegCommandBuilder()
-                 .setInputPath(_videoPath)
-                 .setColorChannelMixer(it)
-                 .setOutputPathCA(op).execute{
 
-                     alertDialog?.dismiss()
-             }
+            if(it == null){
+                _filterVideoPath = _videoPath
+                playerInit()
+            }else{
+                showProcessingDialog()
+                _filterVideoPath = VideoFileUtil(this).createOutputVideoPath()
 
-            /*
-
-                      val cmd = arrayOf(
-                            "-i",
-                            _videoPath,
-                            "-filter_complex",
-                            "[0:v]colorchannelmixer=0.393:0.769:0.189:0.349:0.686:0.168:0.272:0.534:0.131[v]" ,
-                            "-map",
-                            "[v]",
-                            "-c:a",
-                            "copy",
-                          op
-                        )
-
-                      Log.i("FFmpegBuilder",cmd.joinToString())
-
-                        FFmpegKit.executeWithArgumentsAsync(cmd) { session ->
-                            alertDialog?.dismiss()
-                            _mediaItem = MediaItem.fromUri(_filterVideoPath)
-                            _player.clearMediaItems()
-                            _player.setMediaItem(_mediaItem)
-                            _player.playWhenReady = true
-                            _player.prepare()
-
-                        }*/
-    }
-}
-
-override fun onPause() {
-    _player.pause()
-    super.onPause()
-}
-
-override fun onDestroy() {
-    _player.release()
-    super.onDestroy()
-}
-companion object {
-    fun start(context: Context, videoPath: String) {
-        println(videoPath)
-        val intent = Intent(context, EditorActivity::class.java)
-        intent.putExtra("videoPath", videoPath)
-        context.startActivity(intent)
-    }
-}
-
-private fun showProcessingDialog() {
-    try {
-        val alertDialogBuilder = AlertDialog.Builder(this)
-        alertDialogBuilder.setCancelable(false)
-        alertDialogBuilder.setTitle("İşleniyor")
-        alertDialogBuilder.setMessage("Video İşleniyor lütfen bekleyin.")
+                FFmpegCommandBuilder()
+                    .setInputPath(_videoPath)
+                    .setColorChannelMixer(it)
+                    .setOutputPathCA(_filterVideoPath).execute {
+                        alertDialog?.dismiss()
+                        playerInit()
+                    }
+            }
 
 
-        alertDialogBuilder.setPositiveButton("Tamam") { dialog, which ->
-
-            dialog.dismiss()
-            FFmpegKit.cancel()
         }
-        alertDialog = alertDialogBuilder.create()
-        alertDialog!!.show()
-    } catch (e: Exception) {
-        e.printStackTrace()
     }
-}
+
+    override fun onPause() {
+        _player?.pause()
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        _player?.release()
+        super.onDestroy()
+    }
+
+    companion object {
+        fun start(context: Context, videoPath: String) {
+            println(videoPath)
+            val intent = Intent(context, EditorActivity::class.java)
+            intent.putExtra("videoPath", videoPath)
+            context.startActivity(intent)
+        }
+    }
+
+    private fun showProcessingDialog() {
+        try {
+            val alertDialogBuilder = AlertDialog.Builder(this)
+            alertDialogBuilder.setCancelable(false)
+            alertDialogBuilder.setTitle("İşleniyor")
+            alertDialogBuilder.setMessage("Video İşleniyor lütfen bekleyin.")
+
+
+            alertDialogBuilder.setPositiveButton("Tamam") { dialog, which ->
+
+                dialog.dismiss()
+                FFmpegKit.cancel()
+            }
+            alertDialog = alertDialogBuilder.create()
+            alertDialog!!.show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
 }

@@ -27,7 +27,6 @@
 
                 />
 
-
             <dev.iconclad.videoeditor.trimmer.VideoController
                 android:id="@+id/videoController"
                 android:layout_width="match_parent"
