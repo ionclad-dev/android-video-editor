@@ -104,6 +104,7 @@ class VideoGalleryActivity : AppCompatActivity() {
             } while (cursorItem.moveToNext())
 
             cursorItem.close()
+            _videoList.reversed()
             _adapter.setData(_videoList)
 
         }

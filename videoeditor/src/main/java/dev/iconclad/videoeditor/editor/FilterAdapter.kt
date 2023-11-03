@@ -1,7 +1,6 @@
 package dev.iconclad.videoeditor.editor
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.view.LayoutInflater
@@ -47,7 +46,7 @@ class FilterAdapter(val filePath:String) : RecyclerView.Adapter<FilterAdapter.My
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(item:  FilterModel) {
             itemView.setOnClickListener {
-                _onItemClick?.invoke(item.colorchannelmixer)
+                _onItemClick?.invoke(item.ffmpegCode)
             }
             val imageView = itemView.findViewById<SquareImageView>(R.id.imageView)
             item.filter?.let {

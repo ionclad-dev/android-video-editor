@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Looper
 import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.ui.PlayerView
@@ -52,7 +54,9 @@ class EditorActivity : AppCompatActivity() {
         init()
         _player = ExoPlayer.Builder(this)
             .build()
+
         _playerView.player = _player
+        _player?.repeatMode = Player.REPEAT_MODE_ALL
         playerInit()
         filterAdapterInit()
 
@@ -148,6 +152,7 @@ class EditorActivity : AppCompatActivity() {
                     .setInputPath(_videoPath)
                     .setColorChannelMixer(it)
                     .setOutputPathCA(_filterVideoPath).execute {
+
                         alertDialog?.dismiss()
                         playerInit()
                     }

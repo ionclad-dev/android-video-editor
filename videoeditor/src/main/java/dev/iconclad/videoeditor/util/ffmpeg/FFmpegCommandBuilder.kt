@@ -73,7 +73,14 @@ class FFmpegCommandBuilder {
     }
 
     // Video filtresini ayarlamak için kullanılır.
-    fun setColorChannelMixer(filter: String?): FFmpegCommandBuilder {
+    fun setColorChannelMixer(filter: String): FFmpegCommandBuilder {
+        command.add("-vf")
+        command.add(filter)
+        return this
+    }
+
+    /*
+      fun setColorChannelMixer(filter: String?): FFmpegCommandBuilder {
         command.add("-filter_complex")
         command.add("[0:v]colorchannelmixer=$filter[v]")
         command.add("-map")
@@ -81,6 +88,7 @@ class FFmpegCommandBuilder {
 
         return this
     }
+    */
     fun setCode(string: String):FFmpegCommandBuilder{
         command.add(string)
         return this
