@@ -114,6 +114,23 @@
                 app:tabIcon="@drawable/filter"
                 app:tabText="Filtreler" />
         </LinearLayout>
+
+
+        <dev.iconclad.videoeditor.editor.view.GraphicView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Deneme "
+                android:textSize="56sp"
+                android:textColor="#00f"/>
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ve_record_button"/>
+        </dev.iconclad.videoeditor.editor.view.GraphicView>
     </FrameLayout>
 
     <include layout="@layout/ve_item_filter_sheet"/>
